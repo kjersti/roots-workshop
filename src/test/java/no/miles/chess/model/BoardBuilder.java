@@ -5,8 +5,20 @@ public class BoardBuilder {
     private Board board = Board.createEmpty();
 
     public BoardBuilder withPieceOn(Player player, PieceType type, Position position) {
-        board.setPieceOn(new Piece(player, type), position);
+        switch (type) {
+            case PAWN: {
+                withPawnPieceOn(player, position);
+                break;
+            }
+            default:{
+                board.setPieceOn(new Piece(player, type), position);
+            }
+        }
         return this;
+    }
+
+    private void withPawnPieceOn(Player player, Position position) {
+        board.setPieceOn(new PawnPiece(player), position);
     }
 
     public BoardBuilder withBothKings() {

@@ -6,15 +6,15 @@ public class Piece {
 
     public static final Piece NONE = new NullPiece();
 
-    private final Player player;
-    private final PieceType type;
-    private boolean moved;
+    protected final Player player;
+    protected final PieceType type;
+    protected boolean moved;
 
     public Piece(Player player, PieceType type) {
         this(player, type, false);
     }
 
-    private Piece(Player player, PieceType type, boolean moved) {
+    protected Piece(Player player, PieceType type, boolean moved) {
         this.player = player;
         this.type = type;
         this.moved = moved;
@@ -69,12 +69,7 @@ public class Piece {
 
         // Cannot move to a new position if there are other pieces in the
         // way - unless when piece is a knight
-        switch (getType()) {
-            case PAWN: {
-                //Pawns can move one square forwards, or two if it hasn't moved before, and no other piece is blocking.
-                return piecesInPath.isEmpty()
-                        && (move.isVertical() && validDistance(move.verticalDistanceWithDirection(getPlayer())));
-            }
+        switch (type) {
             case ROOK: {
                 //Rooks can move horizontal or vertical, when no other piece is blocking.
                 return piecesInPath.isEmpty() && (move.isHorizontal() || move.isVertical());
