@@ -141,11 +141,7 @@ public class Game {
         } else if(pieceOnDestination.belongsTo(attacker.getPlayer())){
             // Cannot attack own piece
             validCapture = false;
-        } else if (attacker.getType() == PieceType.PAWN) {
-            // Pawns attack diagonally forwards only
-            validCapture = move.getFrom().isDiagonalTo(move.getTo()) && move.verticalDistanceWithDirection(player) == 1;
-        } else if (!attacker.canMove(move, board.piecesInPath(move))) {
-            //Cannot attack position you cannot move to.
+        } else if (!attacker.canCapturePiece(move, board.piecesInPath(move))) {
             validCapture = false;
         }
 

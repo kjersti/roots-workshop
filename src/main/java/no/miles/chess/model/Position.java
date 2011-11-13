@@ -40,4 +40,11 @@ public enum Position {
         return Math.abs(this.row - other.row);
     }
 
+    boolean isBelow(Position other) {
+        return row < other.row;
+    }
+
+    boolean isRightOf(Position other) {
+        return column < other.column;
+    }
 }
