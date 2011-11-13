@@ -5,7 +5,7 @@ import java.util.Set;
 public class NullPiece extends Piece {
 
     public NullPiece() {
-        super(null, null);
+        super(null, false);
     }
 
     @Override
@@ -23,8 +23,11 @@ public class NullPiece extends Piece {
         return false;
     }
 
-    @Override
     boolean canCapture(Move move, Set<Piece> piecesInPath) {
         return false;
+    }
+
+    String getSymbol() {
+        return "  ";
     }
 }

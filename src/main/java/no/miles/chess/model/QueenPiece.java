@@ -9,7 +9,7 @@ public class QueenPiece extends Piece {
     }
 
     protected QueenPiece(Player player, boolean moved) {
-        super(player, PieceType.QUEEN, moved);
+        super(player, moved);
     }
 
     @Override
@@ -23,5 +23,18 @@ public class QueenPiece extends Piece {
         return piecesInPath.isEmpty() &&
                 (move.isVertical() || move.isHorizontal() || move.isDiagonal());
 
+    }
+
+    boolean canCapture(Move move, Set<Piece> piecesInPath) {
+        boolean canCapture = true;
+        if (!canMove(move, piecesInPath)) {
+            //Cannot attack position you cannot move to.
+            canCapture = false;
+        }
+        return canCapture;
+    }
+
+    String getSymbol() {
+        return belongsTo(Player.WHITE) ? "wQ" : "bQ";
     }
 }

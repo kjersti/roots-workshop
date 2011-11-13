@@ -9,7 +9,7 @@ public class PawnPiece extends Piece {
     }
 
     protected PawnPiece(Player player, boolean moved) {
-        super(player, PieceType.PAWN, moved);
+        super(player, moved);
     }
 
     @Override
@@ -20,7 +20,16 @@ public class PawnPiece extends Piece {
     @Override
     boolean canMove(Move move, Set<Piece> piecesInPath) {
         //Pawns can move one square forwards, or two if it hasn't moved before, and no other piece is blocking.
+        int distance = move.verticalDistanceWithDirection(player);
         return piecesInPath.isEmpty()
-                && (move.isVertical() && validDistance(move.verticalDistanceWithDirection(getPlayer())));
+                && (move.isVertical() && (distance == 1 || (!moved && distance == 2)));
+    }
+
+    boolean canCapture(Move move, Set<Piece> piecesInPath) {
+        return move.isDiagonal() && move.verticalDistanceWithDirection(player) == 1;
+    }
+
+    String getSymbol() {
+        return belongsTo(Player.WHITE) ? "wx" : "bx";
     }
 }

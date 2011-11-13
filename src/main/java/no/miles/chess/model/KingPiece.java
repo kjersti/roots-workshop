@@ -9,7 +9,7 @@ public class KingPiece extends Piece {
     }
 
     protected KingPiece(Player player, boolean moved) {
-        super(player, PieceType.KING, moved);
+        super(player, moved);
     }
 
     @Override
@@ -20,9 +20,22 @@ public class KingPiece extends Piece {
     @Override
     boolean canMove(Move move, Set<Piece> piecesInPath) {
         //King can move in all directions, but only one square at a time.
-        return (move.isVertical() && validDistance(move.verticalDistance()))
-                || (move.isDiagonal() && validDistance(move.verticalDistance()))
-                || (move.isHorizontal() && validDistance(move.horizontalDistance()));
+        return (move.isVertical() && move.verticalDistance() == 1)
+                || (move.isDiagonal() && move.verticalDistance() == 1)
+                || (move.isHorizontal() && move.horizontalDistance() == 1);
 
+    }
+
+    boolean canCapture(Move move, Set<Piece> piecesInPath) {
+        boolean canCapture = true;
+        if (!canMove(move, piecesInPath)) {
+            //Cannot attack position you cannot move to.
+            canCapture = false;
+        }
+        return canCapture;
+    }
+
+    String getSymbol() {
+        return belongsTo(Player.WHITE) ? "wK" : "bK";
     }
 }

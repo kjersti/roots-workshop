@@ -9,7 +9,7 @@ public class RookPiece extends Piece {
     }
 
     protected RookPiece(Player player, boolean moved) {
-        super(player, PieceType.ROOK, moved);
+        super(player, moved);
     }
 
     @Override
@@ -20,5 +20,18 @@ public class RookPiece extends Piece {
     @Override
     boolean canMove(Move move, Set<Piece> piecesInPath) {
         return piecesInPath.isEmpty() && (move.isHorizontal() || move.isVertical());
+    }
+
+    boolean canCapture(Move move, Set<Piece> piecesInPath) {
+        boolean canCapture = true;
+        if (!canMove(move, piecesInPath)) {
+            //Cannot attack position you cannot move to.
+            canCapture = false;
+        }
+        return canCapture;
+    }
+
+    String getSymbol() {
+        return belongsTo(Player.WHITE) ? "wR" : "bR";
     }
 }

@@ -70,7 +70,7 @@ public class GameTest {
     public void pawnCanOnlyMoveOneSquareAtTheTimeAfterItHasMovedOnce() {
         Game game = new Game(new BoardBuilder()
                 .withBothKings()
-                .withPieceOn(Player.WHITE, PieceType.PAWN, A4)
+                .withPawnOn(Player.WHITE, A4)
                 .build()
         );
 
@@ -85,7 +85,7 @@ public class GameTest {
     public void pawnCannotMoveBackwards() {
         board = new BoardBuilder()
                 .withBothKings()
-                .withPieceOn(Player.WHITE, PieceType.PAWN, A3)
+                .withPawnOn(Player.WHITE, A3)
                 .build();
         game = new Game(board);
         assertThat(game.canMove(new Move(A3, A2))).isFalse();
@@ -100,7 +100,7 @@ public class GameTest {
     public void pawnCannotMoveSideways() {
         board = new BoardBuilder()
                 .withBothKings()
-                .withPieceOn(Player.WHITE, PieceType.PAWN, A3)
+                .withPawnOn(Player.WHITE, A3)
                 .build();
         game = new Game(board);
         assertThat(game.canMove(new Move(A3, B3))).isFalse();
@@ -110,8 +110,8 @@ public class GameTest {
     public void pawnCannotJumpOtherPieces() {
         board = new BoardBuilder()
                 .withBothKings()
-                .withPieceOn(Player.WHITE, PieceType.PAWN, C2)
-                .withPieceOn(Player.BLACK, PieceType.PAWN, C3)
+                .withPawnOn(Player.WHITE, C2)
+                .withPawnOn(Player.BLACK, C3)
                 .build();
         game = new Game(board);
         assertThat(game.canMove(new Move(C2, C4))).isFalse();
@@ -126,8 +126,8 @@ public class GameTest {
     public void cannotMoveToOccupiedSquare() throws Exception {
         Game game = new Game(new BoardBuilder()
                             .withBothKings()
-                            .withPieceOn(Player.BLACK, PieceType.ROOK, C5)
-                            .withPieceOn(Player.WHITE, PieceType.ROOK, C4)
+                            .withRookOn(Player.BLACK, C5)
+                            .withRookOn(Player.WHITE, C4)
                             .build()
         );
 
@@ -141,7 +141,7 @@ public class GameTest {
     public void rookCanMoveVerticallyAndHorisontally() {
         board = new BoardBuilder()
                 .withBothKings()
-                .withPieceOn(Player.WHITE, PieceType.ROOK, A3)
+                .withRookOn(Player.WHITE, A3)
                 .build();
         game = new Game(board);
         assertThat(game.canMove(new Move(A3, Position.H3))).isTrue();
@@ -152,7 +152,7 @@ public class GameTest {
     public void rookCannotMoveDiagonally() {
         board = new BoardBuilder()
                 .withBothKings()
-                .withPieceOn(Player.WHITE, PieceType.ROOK, A1)
+                .withRookOn(Player.WHITE, A1)
                 .build();
         game = new Game(board);
         assertThat(game.canMove(new Move(A1, C3))).isFalse();
@@ -171,7 +171,7 @@ public class GameTest {
 
         board = new BoardBuilder()
                 .withBothKings()
-                .withPieceOn(Player.WHITE, PieceType.KNIGHT, E4)
+                .withKnightOn(Player.WHITE, E4)
                 .build();
         game = new Game(board);
 
@@ -189,7 +189,7 @@ public class GameTest {
     public void knightCannotMoveForwards() {
         board = new BoardBuilder()
                 .withBothKings()
-                .withPieceOn(Player.WHITE, PieceType.KNIGHT, A1)
+                .withKnightOn(Player.WHITE, A1)
                 .build();
         game = new Game(board);
         assertThat(game.canMove(new Move(A1, A2))).isFalse();
@@ -199,7 +199,7 @@ public class GameTest {
     public void knightCannotMoveDiagonally() {
         board = new BoardBuilder()
                 .withBothKings()
-                .withPieceOn(Player.WHITE, PieceType.KNIGHT, B1)
+                .withKnightOn(Player.WHITE, B1)
                 .build();
         game = new Game(board);
         assertThat(game.canMove(new Move(B1, D3))).isFalse();
@@ -212,7 +212,7 @@ public class GameTest {
     public void bishopCanMoveDiagonally() {
         board = new BoardBuilder()
                 .withBothKings()
-                .withPieceOn(Player.WHITE, PieceType.BISHOP, D6)
+                .withBishopOn(Player.WHITE, D6)
                 .build();
         game = new Game(board);
         assertThat(game.canMove(new Move(D6, G3))).isTrue();
@@ -225,7 +225,7 @@ public class GameTest {
     public void bishopCannotMoveVertically() {
         board = new BoardBuilder()
                 .withBothKings()
-                .withPieceOn(Player.WHITE, PieceType.BISHOP, E3)
+                .withBishopOn(Player.WHITE, E3)
                 .build();
         game = new Game(board);
         assertThat(game.canMove(new Move(E3, E5))).isFalse();
@@ -235,7 +235,7 @@ public class GameTest {
     public void bishopCannotMoveHorizontally() {
         board = new BoardBuilder()
                 .withBothKings()
-                .withPieceOn(Player.WHITE, PieceType.BISHOP, A3)
+                .withBishopOn(Player.WHITE, A3)
                 .build();
         game = new Game(board);
         assertThat(game.canMove(new Move(A3, H3))).isFalse();
@@ -252,7 +252,7 @@ public class GameTest {
     @Test
     public void queenCanMoveHorizontally() {
         board = new BoardBuilder().withBothKings()
-                .withPieceOn(Player.WHITE, PieceType.QUEEN, E4)
+                .withQueenOn(Player.WHITE, E4)
                 .build();
         game = new Game(board);
         assertThat(game.canMove(new Move(E4, A4))).isTrue();
@@ -262,7 +262,7 @@ public class GameTest {
     @Test
     public void queenCanMoveVertically() {
         board = new BoardBuilder().withBothKings()
-                .withPieceOn(Player.WHITE, PieceType.QUEEN, E4)
+                .withQueenOn(Player.WHITE, E4)
                 .build();
         game = new Game(board);
         assertThat(game.canMove(new Move(E4, E7))).isTrue();
@@ -272,7 +272,7 @@ public class GameTest {
     @Test
     public void queenCanMoveDiagonally() {
         board = new BoardBuilder().withBothKings()
-                .withPieceOn(Player.WHITE, PieceType.QUEEN, E4)
+                .withQueenOn(Player.WHITE, E4)
                 .build();
         game = new Game(board);
         assertThat(game.canMove(new Move(E4, H1))).isTrue();
@@ -292,7 +292,7 @@ public class GameTest {
     @Test
     public void kingCanMoveOneSquareInAnyDirection() {
         game = new Game(new BoardBuilder()
-                .withPieceOn(Player.WHITE, PieceType.KING, E4).build());
+                .withKingOn(Player.WHITE, E4).build());
 
         assertThat(game.canMove(new Move(E4, E5))).isTrue();
         assertThat(game.canMove(new Move(E4, E3))).isTrue();
@@ -320,8 +320,8 @@ public class GameTest {
     public void canCaptureEnemyPiece() {
         board = new BoardBuilder()
                 .withBothKings()
-                .withPieceOn(Player.WHITE, PieceType.BISHOP, A3)
-                .withPieceOn(Player.BLACK, PieceType.PAWN, E7)
+                .withBishopOn(Player.WHITE, A3)
+                .withPawnOn(Player.BLACK, E7)
                 .build();
         game = new Game(board);
         assertThat(game.canCapture(new Move(Position.A3, Position.E7))).isTrue();
@@ -336,8 +336,8 @@ public class GameTest {
     public void cannotCaptureOwnPieces() throws Exception {
         Game game = new Game(new BoardBuilder()
                 .withBothKings()
-                .withPieceOn(Player.WHITE, PieceType.ROOK, A4)
-                .withPieceOn(Player.WHITE, PieceType.PAWN, A6)
+                .withRookOn(Player.WHITE, A4)
+                .withPawnOn(Player.WHITE, A6)
                 .build()
             );
 
@@ -348,8 +348,8 @@ public class GameTest {
     public void cannotCaptureWithOpponentPiece() {
                 Game game = new Game(new BoardBuilder()
                 .withBothKings()
-                .withPieceOn(Player.WHITE, PieceType.ROOK, A4)
-                .withPieceOn(Player.BLACK, PieceType.ROOK, A6)
+                .withRookOn(Player.WHITE, A4)
+                .withRookOn(Player.BLACK, A6)
                 .build()
             );
 
@@ -362,8 +362,8 @@ public class GameTest {
     public void pawnCapturesDiagonallyForwards() {
         board = new BoardBuilder()
                 .withBothKings()
-                .withPieceOn(Player.WHITE, PieceType.PAWN, D4)
-                .withPieceOn(Player.BLACK, PieceType.PAWN, E5)
+                .withPawnOn(Player.WHITE, D4)
+                .withPawnOn(Player.BLACK, E5)
                 .build();
         game = new Game(board);
         assertThat(game.canCapture(new Move(Position.D4, Position.E5))).isTrue();
@@ -373,8 +373,8 @@ public class GameTest {
     public void pawnCannotCaptureDiagonallyBackwards() {
         board = new BoardBuilder()
                 .withBothKings()
-                .withPieceOn(Player.WHITE, PieceType.PAWN, D5)
-                .withPieceOn(Player.BLACK, PieceType.PAWN, E4)
+                .withPawnOn(Player.WHITE, D5)
+                .withPawnOn(Player.BLACK, E4)
                 .build();
         game = new Game(board);
         assertThat(game.canCapture(new Move(Position.D5, Position.E4))).isFalse();
@@ -383,8 +383,8 @@ public class GameTest {
     @Test(expected = IllegalArgumentException.class)
     public void pawnCannotCaptureForwards() {
         Game game = new Game(new BoardBuilder().withBothKings()
-                .withPieceOn(Player.WHITE, PieceType.PAWN, G3)
-                .withPieceOn(Player.BLACK, PieceType.PAWN, G4)
+                .withPawnOn(Player.WHITE, G3)
+                .withPawnOn(Player.BLACK, G4)
                 .build());
         game.move(new Move(Position.G3, Position.G4));
     }
@@ -402,9 +402,9 @@ public class GameTest {
     @Test
     public void playerCannotMoveKingToPutItselfInMate() {
         Game game = new Game(new BoardBuilder()
-                .withPieceOn(Player.WHITE, PieceType.KING, D1)
-                .withPieceOn(Player.BLACK, PieceType.KING, D8)
-                .withPieceOn(Player.WHITE, PieceType.QUEEN, C4)
+                .withKingOn(Player.WHITE, D1)
+                .withKingOn(Player.BLACK, D8)
+                .withQueenOn(Player.WHITE, C4)
                 .build());
 
         game.setCurrentPlayer(Player.BLACK);
@@ -414,10 +414,10 @@ public class GameTest {
     @Test
     public void playerCannotMoveInterposingPieceToPlaceItselfInMate() {
         Game game = new Game(new BoardBuilder()
-                .withPieceOn(Player.WHITE, PieceType.KING, D1)
-                .withPieceOn(Player.BLACK, PieceType.KING, D8)
-                .withPieceOn(Player.BLACK, PieceType.ROOK, D6)
-                .withPieceOn(Player.WHITE, PieceType.QUEEN, D4)
+                .withKingOn(Player.WHITE, D1)
+                .withKingOn(Player.BLACK, D8)
+                .withRookOn(Player.BLACK, D6)
+                .withQueenOn(Player.WHITE, D4)
                 .build());
 
         assertThat(game.canMove(new Move(D4, C4))).isFalse();
@@ -436,11 +436,11 @@ public class GameTest {
     @Test
     public void playerIsCheckWhenKingIsThreatenedAndCanEscape() {
         game = new Game(new BoardBuilder()
-                .withPieceOn(Player.WHITE, PieceType.KING, E1)
-                .withPieceOn(Player.WHITE, PieceType.PAWN, E4)
-                .withPieceOn(Player.WHITE, PieceType.QUEEN, E5)
-                .withPieceOn(Player.BLACK, PieceType.KING, E7)
-                .withPieceOn(Player.BLACK, PieceType.PAWN, D6)
+                .withKingOn(Player.WHITE, E1)
+                .withPawnOn(Player.WHITE, E4)
+                .withQueenOn(Player.WHITE, E5)
+                .withKingOn(Player.BLACK, E7)
+                .withPawnOn(Player.BLACK, D6)
                 .build());
 
         game.setCurrentPlayer(Player.BLACK);
@@ -457,11 +457,11 @@ public class GameTest {
     @Test
     public void pawnCannotCaptureToPutCurrentPlayerInCheck() throws Exception {
         Game game = new Game(new BoardBuilder()
-                        .withPieceOn(Player.BLACK, PieceType.KING, C8)
-                        .withPieceOn(Player.BLACK, PieceType.PAWN, C7)
-                        .withPieceOn(Player.WHITE, PieceType.KING, A1)
-                        .withPieceOn(Player.WHITE, PieceType.ROOK, C5)
-                        .withPieceOn(Player.WHITE, PieceType.PAWN, D6)
+                        .withKingOn(Player.BLACK, C8)
+                        .withPawnOn(Player.BLACK, C7)
+                        .withKingOn(Player.WHITE, A1)
+                        .withRookOn(Player.WHITE, C5)
+                        .withPawnOn(Player.WHITE, D6)
 
                         .build()
         );
@@ -476,10 +476,10 @@ public class GameTest {
     @Test
     public void shouldFindPiecesInPath() {
         board = new BoardBuilder()
-                .withPieceOn(Player.WHITE, PieceType.KING, D1)
-                .withPieceOn(Player.BLACK, PieceType.KING, D8)
-                .withPieceOn(Player.BLACK, PieceType.ROOK, D6)
-                .withPieceOn(Player.WHITE, PieceType.QUEEN, D4)
+                .withKingOn(Player.WHITE, D1)
+                .withKingOn(Player.BLACK, D8)
+                .withRookOn(Player.BLACK, D6)
+                .withQueenOn(Player.WHITE, D4)
                 .build();
         Game game = new Game(board);
         assertThat(board.piecesInPath(new Move(D1, D8)))

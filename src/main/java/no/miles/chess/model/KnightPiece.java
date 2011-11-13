@@ -9,7 +9,7 @@ public class KnightPiece extends Piece {
     }
 
     protected KnightPiece(Player player, boolean moved) {
-        super(player, PieceType.KNIGHT, moved);
+        super(player, moved);
     }
 
     @Override
@@ -25,5 +25,18 @@ public class KnightPiece extends Piece {
         return (horizontal == 2 && vertical == 1)
                 || (horizontal == 1 && vertical == 2);
 
+    }
+
+    boolean canCapture(Move move, Set<Piece> piecesInPath) {
+        boolean canCapture = true;
+        if (!canMove(move, piecesInPath)) {
+            //Cannot attack position you cannot move to.
+            canCapture = false;
+        }
+        return canCapture;
+    }
+
+    String getSymbol() {
+        return belongsTo(Player.WHITE) ? "wN" : "bN" ;
     }
 }

@@ -83,7 +83,7 @@ public class Board {
     public Piece findKingForPlayer(Player player) {
         for (Map.Entry<Position, Piece> entry : pieces.entrySet()) {
             Piece piece = entry.getValue();
-            if (piece.belongsTo(player) && piece.getType() == PieceType.KING) {
+            if (piece.belongsTo(player) && (piece instanceof KingPiece)) {
                 return piece;
             }
         }
@@ -150,32 +150,8 @@ public class Board {
             for (int column = 0; column < 8; column++) {
                 Position position = toPosition(row, column);
 
-                String symbol = "";
                 if (hasPieceOn(position)) {
-                    Piece piece = getPieceOn(position);
-                    switch (piece.getType()) {
-                        case BISHOP:
-                            symbol = "B";
-                            break;
-                        case KNIGHT:
-                            symbol = "N";
-                            break;
-                        case ROOK:
-                            symbol = "R";
-                            break;
-                        case KING:
-                            symbol = "K";
-                            break;
-                        case QUEEN:
-                            symbol = "Q";
-                            break;
-                        case PAWN:
-                            symbol = "x";
-                            break;
-                    }
-
-                    symbol = piece.belongsTo(Player.WHITE) ? "w" + symbol : "b" + symbol;
-                    builder.append(symbol + " |");
+                    builder.append(getPieceOn(position).getSymbol() + " |");
                 } else {
                     builder.append("   |");
                 }

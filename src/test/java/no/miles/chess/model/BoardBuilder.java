@@ -4,61 +4,34 @@ public class BoardBuilder {
 
     private Board board = Board.createEmpty();
 
-    public BoardBuilder withPieceOn(Player player, PieceType type, Position position) {
-        switch (type) {
-            case PAWN: {
-                withPawnPieceOn(player, position);
-                break;
-            }
-            case ROOK: {
-                withRookOn(player, position);
-                break;
-            }
-            case KNIGHT: {
-                withKnightOn(player, position);
-                break;
-            }
-            case BISHOP: {
-                withBishopOn(player, position);
-                break;
-            }
-            case QUEEN: {
-                withQueenOn(player, position);
-                break;
-            }
-            case KING: {
-                withKingOn(player, position);
-                break;
-            }
-            default:{
-                board.setPieceOn(new Piece(player, type), position);
-            }
-        }
+    BoardBuilder withKingOn(Player player, Position position) {
+        board.setPieceOn(new KingPiece(player), position);
         return this;
     }
 
-    private void withKingOn(Player player, Position position) {
-        board.setPieceOn(new KingPiece(player), position);
-    }
-
-    private void withQueenOn(Player player, Position position) {
+    BoardBuilder withQueenOn(Player player, Position position) {
         board.setPieceOn(new QueenPiece(player), position);
+        return this;
     }
 
-    private void withBishopOn(Player player, Position position) {
+    BoardBuilder withBishopOn(Player player, Position position) {
         board.setPieceOn(new BishopPiece(player), position);
+        return this;
     }
 
-    private void withKnightOn(Player player, Position position) {
+    BoardBuilder withKnightOn(Player player, Position position) {
         board.setPieceOn(new KnightPiece(player), position);
+        return this;
     }
 
-    private void withRookOn(Player player, Position position) {
+    BoardBuilder withRookOn(Player player, Position position) {
         board.setPieceOn(new RookPiece(player), position);
+        return this;
     }
 
-    private void withPawnPieceOn(Player player, Position position) {
+    BoardBuilder withPawnOn(Player player, Position position) {
         board.setPieceOn(new PawnPiece(player), position);
+        return this;
     }
 
     public BoardBuilder withBothKings() {

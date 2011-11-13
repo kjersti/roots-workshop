@@ -3,9 +3,6 @@ package no.miles.chess.model;
 import org.junit.Before;
 import org.junit.Test;
 
-import static no.miles.chess.model.PieceType.*;
-import static no.miles.chess.model.PieceType.KNIGHT;
-import static no.miles.chess.model.PieceType.ROOK;
 import static no.miles.chess.model.Position.*;
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -29,32 +26,32 @@ public class BoardTest {
         board.makeMove(new Move(A2, A3));
 
         assertThat(board.hasNoPieceOn(A2)).isTrue();
-        assertPieceOn(A3, Player.WHITE, PieceType.PAWN);
+        assertPieceOn(A3, Player.WHITE, PawnPiece.class);
     }
 
     @Test
     public void createInitialBoardConfiguration() {
 
-        assertPieceOn(Position.A1, Player.WHITE, ROOK);
-        assertPieceOn(Position.B1, Player.WHITE, KNIGHT);
-        assertPieceOn(Position.C1, Player.WHITE, BISHOP);
-        assertPieceOn(Position.D1, Player.WHITE, QUEEN);
-        assertPieceOn(Position.E1, Player.WHITE, KING);
-        assertPieceOn(Position.F1, Player.WHITE, BISHOP);
-        assertPieceOn(Position.G1, Player.WHITE, KNIGHT);
-        assertPieceOn(Position.H1, Player.WHITE, ROOK);
+        assertPieceOn(Position.A1, Player.WHITE, RookPiece.class);
+        assertPieceOn(Position.B1, Player.WHITE, KnightPiece.class);
+        assertPieceOn(Position.C1, Player.WHITE, BishopPiece.class);
+        assertPieceOn(Position.D1, Player.WHITE, QueenPiece.class);
+        assertPieceOn(Position.E1, Player.WHITE, KingPiece.class);
+        assertPieceOn(Position.F1, Player.WHITE, BishopPiece.class);
+        assertPieceOn(Position.G1, Player.WHITE, KnightPiece.class);
+        assertPieceOn(Position.H1, Player.WHITE, RookPiece.class);
 
         assertPawns(Player.WHITE, 2);
         assertPawns(Player.BLACK, 7);
 
-        assertPieceOn(Position.A8, Player.BLACK, ROOK);
-        assertPieceOn(Position.B8, Player.BLACK, KNIGHT);
-        assertPieceOn(Position.C8, Player.BLACK, BISHOP);
-        assertPieceOn(Position.D8, Player.BLACK, QUEEN);
-        assertPieceOn(Position.E8, Player.BLACK, KING);
-        assertPieceOn(Position.F8, Player.BLACK, BISHOP);
-        assertPieceOn(Position.G8, Player.BLACK, KNIGHT);
-        assertPieceOn(Position.H8, Player.BLACK, ROOK);
+        assertPieceOn(Position.A8, Player.BLACK, RookPiece.class);
+        assertPieceOn(Position.B8, Player.BLACK, KnightPiece.class);
+        assertPieceOn(Position.C8, Player.BLACK, BishopPiece.class);
+        assertPieceOn(Position.D8, Player.BLACK, QueenPiece.class);
+        assertPieceOn(Position.E8, Player.BLACK, KingPiece.class);
+        assertPieceOn(Position.F8, Player.BLACK, BishopPiece.class);
+        assertPieceOn(Position.G8, Player.BLACK, KnightPiece.class);
+        assertPieceOn(Position.H8, Player.BLACK, RookPiece.class);
 
         for (Position p : Position.values()) {
             if (p.row > 2 && p.row < 7) {
@@ -66,26 +63,26 @@ public class BoardTest {
     @Test
     public void moveShouldPutPieceOnNewPositionAndSetOldPositionToEmpty() {
         board.makeMove(new Move(Position.A2, Position.A3));
-        assertPieceOn(Position.A3, Player.WHITE, PieceType.PAWN);
+        assertPieceOn(Position.A3, Player.WHITE, PawnPiece.class);
         assertThat(board.hasNoPieceOn(Position.A2)).isTrue();
     }
 
     @Test
     public void moveToOccupiedPositionShouldReplaceCurrentlyOccupyingPieceWithMovingPiece() {
         board = new BoardBuilder()
-                .withPieceOn(Player.WHITE, PieceType.BISHOP, A3)
-                .withPieceOn(Player.BLACK, PieceType.PAWN, E7)
+                .withBishopOn(Player.WHITE, A3)
+                .withPawnOn(Player.BLACK, E7)
                 .build();
 
         board.makeMove(new Move(Position.A3, Position.E7));
         assertThat(board.getPieceOn(Position.E7).belongsTo(Player.WHITE)).isTrue();
-        assertThat(board.getPieceOn(Position.E7).getType()).isEqualTo(PieceType.BISHOP);
+        assertThat(board.getPieceOn(Position.E7)).isInstanceOf(BishopPiece.class);
     }
 
     private void assertPawns(Player player, int row) {
         for (Position p : Position.values()) {
             if (p.row == row) {
-                assertPieceOn(p, player, PieceType.PAWN);
+                assertPieceOn(p, player, PawnPiece.class);
             }
         }
     }
@@ -116,10 +113,10 @@ public class BoardTest {
         assertThat(board.toString()).isEqualTo(expected);
     }
 
-    private void assertPieceOn(Position position, Player player, PieceType type) {
+    private void assertPieceOn(Position position, Player player, Class<? extends Piece> type) {
         Piece piece = board.getPieceOn(position);
         assertThat(piece.belongsTo(player)).isTrue();
-        assertThat(piece.getType() == type).isTrue();
+        assertThat(piece).isInstanceOf(type);
     }
 
 }

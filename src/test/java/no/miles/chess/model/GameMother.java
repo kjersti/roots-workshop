@@ -4,13 +4,13 @@ public class GameMother {
 
     public static Game shortestGameEverRecorded() {
         Board board = new BoardBuilder()
-                .withPieceOn(Player.WHITE, PieceType.QUEEN, Position.E5)
-                .withPieceOn(Player.WHITE, PieceType.KING, Position.E1)
-                .withPieceOn(Player.BLACK, PieceType.KING, Position.E7)
-                .withPieceOn(Player.BLACK, PieceType.QUEEN, Position.D8)
-                .withPieceOn(Player.BLACK, PieceType.PAWN, Position.D7)
-                .withPieceOn(Player.BLACK, PieceType.PAWN, Position.F7)
-                .withPieceOn(Player.BLACK, PieceType.BISHOP, Position.F8)
+                .withQueenOn(Player.WHITE, Position.E5)
+                .withKingOn(Player.WHITE, Position.E1)
+                .withKingOn(Player.BLACK, Position.E7)
+                .withQueenOn(Player.BLACK, Position.D8)
+                .withPawnOn(Player.BLACK, Position.D7)
+                .withPawnOn(Player.BLACK, Position.F7)
+                .withBishopOn(Player.BLACK, Position.F8)
                 .build();
         Game game = new Game(board);
         game.setCurrentPlayer(Player.BLACK);

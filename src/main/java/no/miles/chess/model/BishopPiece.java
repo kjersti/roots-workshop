@@ -9,7 +9,7 @@ public class BishopPiece extends Piece {
     }
 
     protected BishopPiece(Player player, boolean moved) {
-        super(player, PieceType.BISHOP, moved);
+        super(player, moved);
     }
 
     @Override
@@ -22,5 +22,18 @@ public class BishopPiece extends Piece {
         //Bishops can move diagonally, when no other piece is blocking.
         return piecesInPath.isEmpty() && move.isDiagonal();
 
+    }
+
+    boolean canCapture(Move move, Set<Piece> piecesInPath) {
+        boolean canCapture = true;
+        if (!canMove(move, piecesInPath)) {
+            //Cannot attack position you cannot move to.
+            canCapture = false;
+        }
+        return canCapture;
+    }
+
+    String getSymbol() {
+        return belongsTo(Player.WHITE) ? "wB" : "bB";
     }
 }
