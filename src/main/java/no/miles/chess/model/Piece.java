@@ -70,32 +70,6 @@ public class Piece {
         // Cannot move to a new position if there are other pieces in the
         // way - unless when piece is a knight
         switch (type) {
-            case ROOK: {
-                //Rooks can move horizontal or vertical, when no other piece is blocking.
-                return piecesInPath.isEmpty() && (move.isHorizontal() || move.isVertical());
-            }
-            case KNIGHT: {
-                //Knights can jump in a knightly manner.
-                int horizontal = move.horizontalDistance();
-                int vertical = move.verticalDistance();
-                return (horizontal == 2 && vertical == 1)
-                        || (horizontal == 1 && vertical == 2);
-            }
-            case BISHOP: {
-                //Bishops can move diagonally, when no other piece is blocking.
-                return piecesInPath.isEmpty() && move.isDiagonal();
-            }
-            case QUEEN: {
-                //Queens can move all over, when no other piece is blocking.
-                return piecesInPath.isEmpty() &&
-                        (move.isVertical() || move.isHorizontal() || move.isDiagonal());
-            }
-            case KING: {
-                //King can move in all directions, but only one square at a time.
-                return (move.isVertical() && validDistance(move.verticalDistance()))
-                        || (move.isDiagonal() && validDistance(move.verticalDistance()))
-                        || (move.isHorizontal() && validDistance(move.horizontalDistance()));
-            }
             default: {
                 throw new IllegalArgumentException("Non-supported piece type: " + getType());
             }

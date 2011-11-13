@@ -34,14 +34,14 @@ public class Board {
 
     private void placeInitialPieces() {
         // Always start with initial board!
-        pieces.put(Position.A1, new Piece(Player.WHITE, PieceType.ROOK));
-        pieces.put(Position.B1, new Piece(Player.WHITE, PieceType.KNIGHT));
-        pieces.put(Position.C1, new Piece(Player.WHITE, PieceType.BISHOP));
-        pieces.put(Position.D1, new Piece(Player.WHITE, PieceType.QUEEN));
-        pieces.put(Position.E1, new Piece(Player.WHITE, PieceType.KING));
-        pieces.put(Position.F1, new Piece(Player.WHITE, PieceType.BISHOP));
-        pieces.put(Position.G1, new Piece(Player.WHITE, PieceType.KNIGHT));
-        pieces.put(Position.H1, new Piece(Player.WHITE, PieceType.ROOK));
+        pieces.put(Position.A1, new RookPiece(Player.WHITE));
+        pieces.put(Position.B1, new KnightPiece(Player.WHITE));
+        pieces.put(Position.C1, new BishopPiece(Player.WHITE));
+        pieces.put(Position.D1, new QueenPiece(Player.WHITE));
+        pieces.put(Position.E1, new KingPiece(Player.WHITE));
+        pieces.put(Position.F1, new BishopPiece(Player.WHITE));
+        pieces.put(Position.G1, new KnightPiece(Player.WHITE));
+        pieces.put(Position.H1, new RookPiece(Player.WHITE));
         pieces.put(Position.A2, new PawnPiece(Player.WHITE));
         pieces.put(Position.B2, new PawnPiece(Player.WHITE));
         pieces.put(Position.C2, new PawnPiece(Player.WHITE));
@@ -51,14 +51,14 @@ public class Board {
         pieces.put(Position.G2, new PawnPiece(Player.WHITE));
         pieces.put(Position.H2, new PawnPiece(Player.WHITE));
 
-        pieces.put(Position.A8, new Piece(Player.BLACK, PieceType.ROOK));
-        pieces.put(Position.B8, new Piece(Player.BLACK, PieceType.KNIGHT));
-        pieces.put(Position.C8, new Piece(Player.BLACK, PieceType.BISHOP));
-        pieces.put(Position.D8, new Piece(Player.BLACK, PieceType.QUEEN));
-        pieces.put(Position.E8, new Piece(Player.BLACK, PieceType.KING));
-        pieces.put(Position.F8, new Piece(Player.BLACK, PieceType.BISHOP));
-        pieces.put(Position.G8, new Piece(Player.BLACK, PieceType.KNIGHT));
-        pieces.put(Position.H8, new Piece(Player.BLACK, PieceType.ROOK));
+        pieces.put(Position.A8, new RookPiece(Player.BLACK));
+        pieces.put(Position.B8, new KnightPiece(Player.BLACK));
+        pieces.put(Position.C8, new BishopPiece(Player.BLACK));
+        pieces.put(Position.D8, new QueenPiece(Player.BLACK));
+        pieces.put(Position.E8, new KingPiece(Player.BLACK));
+        pieces.put(Position.F8, new BishopPiece(Player.BLACK));
+        pieces.put(Position.G8, new KnightPiece(Player.BLACK));
+        pieces.put(Position.H8, new RookPiece(Player.BLACK));
         pieces.put(Position.A7, new PawnPiece(Player.BLACK));
         pieces.put(Position.B7, new PawnPiece(Player.BLACK));
         pieces.put(Position.C7, new PawnPiece(Player.BLACK));
