@@ -19,9 +19,9 @@ public class Board {
         return new Board();
     }
 
-    public static Board simulateBoardAfterMove(Board board, Position from, Position to) {
+    public static Board simulateBoardAfterMove(Move move, Board board) {
         Board newBoard = new Board(board);
-        newBoard.makeMove(from, to);
+        newBoard.makeMove(move);
         return newBoard;
     }
 
@@ -113,11 +113,11 @@ public class Board {
         return !hasPieceOn(position);
     }
 
-    public void makeMove(Position from, Position to) {
-        Piece piece = pieces.get(from);
+    public void makeMove(Move move) {
+        Piece piece = pieces.get(move.getFrom());
 
-        pieces.put(from, null);
-        pieces.put(to, piece);
+        pieces.put(move.getFrom(), null);
+        pieces.put(move.getTo(), piece);
         piece.setMoved(true);
     }
 

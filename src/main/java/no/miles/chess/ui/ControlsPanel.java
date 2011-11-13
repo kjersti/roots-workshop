@@ -1,6 +1,7 @@
 package no.miles.chess.ui;
 
 import no.miles.chess.model.Game;
+import no.miles.chess.model.Move;
 import no.miles.chess.model.Player;
 import no.miles.chess.model.Position;
 
@@ -70,8 +71,8 @@ public class ControlsPanel extends JPanel {
         if (move == null) {
             showMessage(parser.getErrorText());
         } else {
-            if (game.canMove(move[0], move[1])) {
-                game.move(move[0], move[1]);
+            if (game.canMove(new Move(move[0], move[1]))) {
+                game.move(new Move(move[0], move[1]));
                 updatePlayerColor();
                 if (game.isCurrentPlayerInCheckMate()) {
                     commandField.setEnabled(false);

@@ -24,7 +24,7 @@ public class GameTest {
 
     @Test
     public void blackMakesSecondMove() {
-        game.move(Position.E2, Position.E3);
+        game.move(new Move(Position.E2, Position.E3));
         assertThat(game.currentPlayer()).isEqualTo(Player.BLACK);
     }
 
@@ -33,18 +33,18 @@ public class GameTest {
      ***********************/
     @Test
     public void cannotMoveToOccupiedPosition() {
-        assertThat(game.canMove(Position.E8, Position.D8)).isFalse();
+        assertThat(game.canMove(new Move(Position.E8, Position.D8))).isFalse();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void canOnlyMoveOwnPieces() {
         game = new Game(Board.createInitial());
-        game.move(Position.A7, Position.A5);
+        game.move(new Move(Position.A7, Position.A5));
     }
 
     @Test
     public void cannotMoveFromEmptySquare() {
-        assertThat(game.canMove(A4, A5)).isFalse();
+        assertThat(game.canMove(new Move(A4, A5))).isFalse();
     }
 
     /***********************
@@ -52,18 +52,18 @@ public class GameTest {
      ***********************/
     @Test
     public void whitePawnCanMoveOneSquareForwards() {
-        assertThat(game.canMove(A2, A3)).isTrue();
+        assertThat(game.canMove(new Move(A2, A3))).isTrue();
     }
 
     @Test
     public void blackPawnCanMoveOneSquareForwards() {
         game.setCurrentPlayer(Player.BLACK);
-        assertThat(game.canMove(A7, A6)).isTrue();
+        assertThat(game.canMove(new Move(A7, A6))).isTrue();
     }
 
     @Test
     public void pawnCanMoveTwoSquaresForwardsInFirstMove() {
-        assertThat(game.canMove(A2, A4)).isTrue();
+        assertThat(game.canMove(new Move(A2, A4))).isTrue();
     }
 
     @Test
@@ -74,11 +74,11 @@ public class GameTest {
                 .build()
         );
 
-        game.move(A4, A5);
+        game.move(new Move(A4, A5));
         game.setCurrentPlayer(Player.WHITE);
 
-        assertThat(game.canMove(A5, A6)).isTrue();
-        assertThat(game.canMove(A5, A7)).isFalse();
+        assertThat(game.canMove(new Move(A5, A6))).isTrue();
+        assertThat(game.canMove(new Move(A5, A7))).isFalse();
     }
 
     @Test
@@ -88,12 +88,12 @@ public class GameTest {
                 .withPieceOn(Player.WHITE, PieceType.PAWN, A3)
                 .build();
         game = new Game(board);
-        assertThat(game.canMove(A3, A2)).isFalse();
+        assertThat(game.canMove(new Move(A3, A2))).isFalse();
     }
 
     @Test
     public void pawnCannotMoveDiagonally() {
-        assertThat(game.canMove(A2, B3)).isFalse();
+        assertThat(game.canMove(new Move(A2, B3))).isFalse();
     }
 
     @Test
@@ -103,7 +103,7 @@ public class GameTest {
                 .withPieceOn(Player.WHITE, PieceType.PAWN, A3)
                 .build();
         game = new Game(board);
-        assertThat(game.canMove(A3, B3)).isFalse();
+        assertThat(game.canMove(new Move(A3, B3))).isFalse();
     }
 
     @Test
@@ -114,12 +114,12 @@ public class GameTest {
                 .withPieceOn(Player.BLACK, PieceType.PAWN, C3)
                 .build();
         game = new Game(board);
-        assertThat(game.canMove(C2, C4)).isFalse();
+        assertThat(game.canMove(new Move(C2, C4))).isFalse();
     }
 
     @Test
     public void pawnCannotMoveMoreThanTwoSquares() {
-        assertThat(game.canMove(A2, A5)).isFalse();
+        assertThat(game.canMove(new Move(A2, A5))).isFalse();
     }
 
     @Test
@@ -131,7 +131,7 @@ public class GameTest {
                             .build()
         );
 
-        assertThat(game.canMake(C4, C5)).isFalse();
+        assertThat(game.canMake(new Move(C4, C5))).isFalse();
     }
 
     /***********************
@@ -144,8 +144,8 @@ public class GameTest {
                 .withPieceOn(Player.WHITE, PieceType.ROOK, A3)
                 .build();
         game = new Game(board);
-        assertThat(game.canMove(A3, Position.H3)).isTrue();
-        assertThat(game.canMove(A3, Position.A6)).isTrue();
+        assertThat(game.canMove(new Move(A3, Position.H3))).isTrue();
+        assertThat(game.canMove(new Move(A3, Position.A6))).isTrue();
     }
 
     @Test
@@ -155,12 +155,12 @@ public class GameTest {
                 .withPieceOn(Player.WHITE, PieceType.ROOK, A1)
                 .build();
         game = new Game(board);
-        assertThat(game.canMove(A1, C3)).isFalse();
+        assertThat(game.canMove(new Move(A1, C3))).isFalse();
     }
 
     @Test
     public void rookCannotJumpOverOtherPieces() {
-        assertThat(game.canMove(A1, A3)).isFalse();
+        assertThat(game.canMove(new Move(A1, A3))).isFalse();
     }
 
     /***********************
@@ -175,14 +175,14 @@ public class GameTest {
                 .build();
         game = new Game(board);
 
-        assertThat(game.canMove(E4, D2)).isTrue();
-        assertThat(game.canMove(E4, D6)).isTrue();
-        assertThat(game.canMove(E4, C3)).isTrue();
-        assertThat(game.canMove(E4, C5)).isTrue();
-        assertThat(game.canMove(E4, F2)).isTrue();
-        assertThat(game.canMove(E4, F6)).isTrue();
-        assertThat(game.canMove(E4, G3)).isTrue();
-        assertThat(game.canMove(E4, G5)).isTrue();
+        assertThat(game.canMove(new Move(E4, D2))).isTrue();
+        assertThat(game.canMove(new Move(E4, D6))).isTrue();
+        assertThat(game.canMove(new Move(E4, C3))).isTrue();
+        assertThat(game.canMove(new Move(E4, C5))).isTrue();
+        assertThat(game.canMove(new Move(E4, F2))).isTrue();
+        assertThat(game.canMove(new Move(E4, F6))).isTrue();
+        assertThat(game.canMove(new Move(E4, G3))).isTrue();
+        assertThat(game.canMove(new Move(E4, G5))).isTrue();
     }
 
     @Test
@@ -192,7 +192,7 @@ public class GameTest {
                 .withPieceOn(Player.WHITE, PieceType.KNIGHT, A1)
                 .build();
         game = new Game(board);
-        assertThat(game.canMove(A1, A2)).isFalse();
+        assertThat(game.canMove(new Move(A1, A2))).isFalse();
     }
 
     @Test
@@ -202,7 +202,7 @@ public class GameTest {
                 .withPieceOn(Player.WHITE, PieceType.KNIGHT, B1)
                 .build();
         game = new Game(board);
-        assertThat(game.canMove(B1, D3)).isFalse();
+        assertThat(game.canMove(new Move(B1, D3))).isFalse();
     }
 
     /***********************
@@ -215,10 +215,10 @@ public class GameTest {
                 .withPieceOn(Player.WHITE, PieceType.BISHOP, D6)
                 .build();
         game = new Game(board);
-        assertThat(game.canMove(D6, G3)).isTrue();
-        assertThat(game.canMove(D6, A3)).isTrue();
-        assertThat(game.canMove(D6, H2)).isTrue();
-        assertThat(game.canMove(D6, E7)).isTrue();
+        assertThat(game.canMove(new Move(D6, G3))).isTrue();
+        assertThat(game.canMove(new Move(D6, A3))).isTrue();
+        assertThat(game.canMove(new Move(D6, H2))).isTrue();
+        assertThat(game.canMove(new Move(D6, E7))).isTrue();
     }
     
     @Test
@@ -228,7 +228,7 @@ public class GameTest {
                 .withPieceOn(Player.WHITE, PieceType.BISHOP, E3)
                 .build();
         game = new Game(board);
-        assertThat(game.canMove(E3, E5)).isFalse();
+        assertThat(game.canMove(new Move(E3, E5))).isFalse();
     }
 
     @Test
@@ -238,12 +238,12 @@ public class GameTest {
                 .withPieceOn(Player.WHITE, PieceType.BISHOP, A3)
                 .build();
         game = new Game(board);
-        assertThat(game.canMove(A3, H3)).isFalse();
+        assertThat(game.canMove(new Move(A3, H3))).isFalse();
     }
 
     @Test
     public void bishopsCannotJumpOverOtherPieces() {
-        assertThat(game.canMove(C1, A3)).isFalse();
+        assertThat(game.canMove(new Move(C1, A3))).isFalse();
     }
 
     /***********************
@@ -255,8 +255,8 @@ public class GameTest {
                 .withPieceOn(Player.WHITE, PieceType.QUEEN, E4)
                 .build();
         game = new Game(board);
-        assertThat(game.canMove(E4, A4)).isTrue();
-        assertThat(game.canMove(E4, H4)).isTrue();
+        assertThat(game.canMove(new Move(E4, A4))).isTrue();
+        assertThat(game.canMove(new Move(E4, H4))).isTrue();
     }
 
     @Test
@@ -265,8 +265,8 @@ public class GameTest {
                 .withPieceOn(Player.WHITE, PieceType.QUEEN, E4)
                 .build();
         game = new Game(board);
-        assertThat(game.canMove(E4, E7)).isTrue();
-        assertThat(game.canMove(E4, E2)).isTrue();
+        assertThat(game.canMove(new Move(E4, E7))).isTrue();
+        assertThat(game.canMove(new Move(E4, E2))).isTrue();
     }
 
     @Test
@@ -275,15 +275,15 @@ public class GameTest {
                 .withPieceOn(Player.WHITE, PieceType.QUEEN, E4)
                 .build();
         game = new Game(board);
-        assertThat(game.canMove(E4, H1)).isTrue();
-        assertThat(game.canMove(E4, H7)).isTrue();
-        assertThat(game.canMove(E4, C2)).isTrue();
-        assertThat(game.canMove(E4, C6)).isTrue();
+        assertThat(game.canMove(new Move(E4, H1))).isTrue();
+        assertThat(game.canMove(new Move(E4, H7))).isTrue();
+        assertThat(game.canMove(new Move(E4, C2))).isTrue();
+        assertThat(game.canMove(new Move(E4, C6))).isTrue();
     }
 
     @Test
     public void queenCannotJumpOverOtherPieces() {
-        assertThat(game.canMove(D1, D3)).isFalse();
+        assertThat(game.canMove(new Move(D1, D3))).isFalse();
     }
 
     /***********************
@@ -294,14 +294,14 @@ public class GameTest {
         game = new Game(new BoardBuilder()
                 .withPieceOn(Player.WHITE, PieceType.KING, E4).build());
 
-        assertThat(game.canMove(E4, E5)).isTrue();
-        assertThat(game.canMove(E4, E3)).isTrue();
-        assertThat(game.canMove(E4, D5)).isTrue();
-        assertThat(game.canMove(E4, D4)).isTrue();
-        assertThat(game.canMove(E4, D3)).isTrue();
-        assertThat(game.canMove(E4, F5)).isTrue();
-        assertThat(game.canMove(E4, F4)).isTrue();
-        assertThat(game.canMove(E4, F3)).isTrue();
+        assertThat(game.canMove(new Move(E4, E5))).isTrue();
+        assertThat(game.canMove(new Move(E4, E3))).isTrue();
+        assertThat(game.canMove(new Move(E4, D5))).isTrue();
+        assertThat(game.canMove(new Move(E4, D4))).isTrue();
+        assertThat(game.canMove(new Move(E4, D3))).isTrue();
+        assertThat(game.canMove(new Move(E4, F5))).isTrue();
+        assertThat(game.canMove(new Move(E4, F4))).isTrue();
+        assertThat(game.canMove(new Move(E4, F3))).isTrue();
     }
 
     @Test
@@ -310,7 +310,7 @@ public class GameTest {
                 .withBothKings()
                 .build();
         game = new Game(board);
-        assertThat(game.canMove(E1, E3)).isFalse();
+        assertThat(game.canMove(new Move(E1, E3))).isFalse();
     }
 
     /***********************
@@ -324,12 +324,12 @@ public class GameTest {
                 .withPieceOn(Player.BLACK, PieceType.PAWN, E7)
                 .build();
         game = new Game(board);
-        assertThat(game.canCapture(Position.A3, Position.E7)).isTrue();
+        assertThat(game.canCapture(new Move(Position.A3, Position.E7))).isTrue();
     }
 
     @Test
     public void cannotCaptureOnEmptySquare() {
-        assertThat(game.canCapture(Position.B1, Position.C3)).isFalse();
+        assertThat(game.canCapture(new Move(Position.B1, Position.C3))).isFalse();
     }
 
     @Test
@@ -341,7 +341,7 @@ public class GameTest {
                 .build()
             );
 
-        assertThat(game.canCapture(A4, A6)).isFalse();
+        assertThat(game.canCapture(new Move(A4, A6))).isFalse();
     }
 
     @Test
@@ -354,8 +354,8 @@ public class GameTest {
             );
 
         game.setCurrentPlayer(Player.BLACK);
-        assertThat(game.canCapture(A4, A6)).isFalse();
-        assertThat(game.canCapture(A6, A4)).isTrue();
+        assertThat(game.canCapture(new Move(A4, A6))).isFalse();
+        assertThat(game.canCapture(new Move(A6, A4))).isTrue();
     }
 
     @Test
@@ -366,7 +366,7 @@ public class GameTest {
                 .withPieceOn(Player.BLACK, PieceType.PAWN, E5)
                 .build();
         game = new Game(board);
-        assertThat(game.canCapture(Position.D4, Position.E5)).isTrue();
+        assertThat(game.canCapture(new Move(Position.D4, Position.E5))).isTrue();
     }
 
     @Test
@@ -377,7 +377,7 @@ public class GameTest {
                 .withPieceOn(Player.BLACK, PieceType.PAWN, E4)
                 .build();
         game = new Game(board);
-        assertThat(game.canCapture(Position.D5, Position.E4)).isFalse();
+        assertThat(game.canCapture(new Move(Position.D5, Position.E4))).isFalse();
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -386,7 +386,7 @@ public class GameTest {
                 .withPieceOn(Player.WHITE, PieceType.PAWN, G3)
                 .withPieceOn(Player.BLACK, PieceType.PAWN, G4)
                 .build());
-        game.move(Position.G3, Position.G4);
+        game.move(new Move(Position.G3, Position.G4));
     }
 
     /***********************
@@ -408,7 +408,7 @@ public class GameTest {
                 .build());
 
         game.setCurrentPlayer(Player.BLACK);
-        assertThat(game.canMove(D8, C8)).isFalse();
+        assertThat(game.canMove(new Move(D8, C8))).isFalse();
     }
 
     @Test
@@ -420,7 +420,7 @@ public class GameTest {
                 .withPieceOn(Player.WHITE, PieceType.QUEEN, D4)
                 .build());
 
-        assertThat(game.canMove(D4, C4)).isFalse();
+        assertThat(game.canMove(new Move(D4, C4))).isFalse();
     }
 
     @Test
@@ -467,7 +467,7 @@ public class GameTest {
         );
         game.setCurrentPlayer(Player.BLACK);
 
-        assertThat(game.canMove(C7, D6)).isFalse();
+        assertThat(game.canMove(new Move(C7, D6))).isFalse();
     }
 
     /***********************
@@ -482,7 +482,7 @@ public class GameTest {
                 .withPieceOn(Player.WHITE, PieceType.QUEEN, D4)
                 .build();
         Game game = new Game(board);
-        assertThat(game.piecesInPath(D1, D8, board))
+        assertThat(game.piecesInPath(new Move(D1, D8), board))
                 .contains(board.getPieceOn(D4))
                 .contains(board.getPieceOn(D6))
                 .excludes(board.getPieceOn(D5));

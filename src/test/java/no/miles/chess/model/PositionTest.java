@@ -17,42 +17,42 @@ public class PositionTest {
 
     @Test
     public void shouldGiveAllPositionsInUpLeftPath() {
-        Assertions.assertThat(game.calculatePositionsInPath(Position.C1, Position.A3)).contains(Position.B2);
+        Assertions.assertThat(game.calculatePositionsInPath(new Move(Position.C1, Position.A3))).contains(Position.B2);
     }
 
     @Test
     public void shouldGiveAllPositionsInUpRightPath() {
-        assertThat(game.calculatePositionsInPath(Position.C1, Position.E3)).contains(Position.D2);
+        assertThat(game.calculatePositionsInPath(new Move(Position.C1, Position.E3))).contains(Position.D2);
     }
 
     @Test
     public void shouldGiveNoPositionsOnDiscontinuousPaths() {
-        assertThat(game.calculatePositionsInPath(Position.A1, Position.G3)).isEmpty();
+        assertThat(game.calculatePositionsInPath(new Move(Position.A1, Position.G3))).isEmpty();
     }
 
     @Test
     public void shouldGiveAllPositionsInDownPath() {
-        assertThat(game.calculatePositionsInPath(Position.A5, Position.A3)).contains(Position.A4);
+        assertThat(game.calculatePositionsInPath(new Move(Position.A5, Position.A3))).contains(Position.A4);
     }
 
     @Test
     public void shouldGiveAllPositionsInUpPath() {
-        assertThat(game.calculatePositionsInPath(Position.C3, Position.C5)).contains(Position.C4);
+        assertThat(game.calculatePositionsInPath(new Move(Position.C3, Position.C5))).contains(Position.C4);
     }
 
     @Test
     public void shouldGiveAllPositionsInRightPath() {
-        assertThat(game.calculatePositionsInPath(Position.C3, Position.H3)).contains(Position.E3);
+        assertThat(game.calculatePositionsInPath(new Move(Position.C3, Position.H3))).contains(Position.E3);
     }
 
     @Test
     public void shouldGiveAllPositionsInLeftPath() {
-        assertThat(game.calculatePositionsInPath(Position.G6, Position.A6)).contains(Position.B6);
+        assertThat(game.calculatePositionsInPath(new Move(Position.G6, Position.A6))).contains(Position.B6);
     }
 
     @Test
     public void pathShouldNotIncludeDestination() {
-        assertThat(game.calculatePositionsInPath(Position.D4, Position.D6)).excludes(Position.D6);
+        assertThat(game.calculatePositionsInPath(new Move(Position.D4, Position.D6))).excludes(Position.D6);
     }
     
     @Test
@@ -62,7 +62,7 @@ public class PositionTest {
 
     @Test
     public void shouldBeEmpty() {
-        assertThat(game.calculatePositionsInPath(Position.A3, Position.E7))
+        assertThat(game.calculatePositionsInPath(new Move(Position.A3, Position.E7)))
                 .contains(Position.B4)
                 .contains(Position.C5)
                 .contains(Position.D6)

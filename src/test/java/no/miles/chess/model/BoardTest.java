@@ -26,7 +26,7 @@ public class BoardTest {
 
     @Test
     public void moveWhitePawnOneForward() {
-        board.makeMove(A2, A3);
+        board.makeMove(new Move(A2, A3));
 
         assertThat(board.hasNoPieceOn(A2)).isTrue();
         assertPieceOn(A3, Player.WHITE, PieceType.PAWN);
@@ -65,7 +65,7 @@ public class BoardTest {
 
     @Test
     public void moveShouldPutPieceOnNewPositionAndSetOldPositionToEmpty() {
-        board.makeMove(Position.A2, Position.A3);
+        board.makeMove(new Move(Position.A2, Position.A3));
         assertPieceOn(Position.A3, Player.WHITE, PieceType.PAWN);
         assertThat(board.hasNoPieceOn(Position.A2)).isTrue();
     }
@@ -77,7 +77,7 @@ public class BoardTest {
                 .withPieceOn(Player.BLACK, PieceType.PAWN, E7)
                 .build();
 
-        board.makeMove(Position.A3, Position.E7);
+        board.makeMove(new Move(Position.A3, Position.E7));
         assertThat(board.getPieceOn(Position.E7).belongsTo(Player.WHITE)).isTrue();
         assertThat(board.getPieceOn(Position.E7).getType()).isEqualTo(PieceType.BISHOP);
     }

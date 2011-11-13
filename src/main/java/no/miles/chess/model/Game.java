@@ -13,21 +13,21 @@ public class Game {
         currentPlayer = Player.WHITE;
     }
 
-    public void move(Position from, Position to) {
-        if (canMove(from, to)) {
-            board.makeMove(from, to);
+    public void move(Move move) {
+        if (canMove(move)) {
+            board.makeMove(move);
             currentPlayer = opponent(currentPlayer);
         } else {
-            throw new IllegalArgumentException("Cannot make move " + from + "-" + to);
+            throw new IllegalArgumentException("Cannot make move " + move);
         }
     }
 
-    public boolean canMove(Position from, Position to) {
-        boolean isValidMove = canMake(from, to) || canCapture(from, to);
+    public boolean canMove(Move move) {
+        boolean isValidMove = canMake(move) || canCapture(move);
         if (isValidMove) {
             //We cannot put ourselves in check. If we do this move, will the
             //current player put herself in check?
-            Board simulatedBoardAfterMove = Board.simulateBoardAfterMove(board, from, to);
+            Board simulatedBoardAfterMove = Board.simulateBoardAfterMove(move, board);
             Piece kingForPlayer = simulatedBoardAfterMove.findKingForPlayer(currentPlayer);
             Position kingsPosition = simulatedBoardAfterMove.getPositionOf(kingForPlayer);
             if (isAttackableForOpponent(currentPlayer, kingsPosition, simulatedBoardAfterMove)) {
@@ -74,7 +74,8 @@ public class Game {
         // king to move here
         for (Position possibleDestination : Position.values()) {
             boolean isValidMove;
-            if (canMovePiece(position, possibleDestination, king, board)) {
+            Move move = new Move(position, possibleDestination);
+            if (canMovePiece(move, king, board)) {
                 Piece pieceOnDestination = board.getPieceOn(possibleDestination);
                 if (pieceOnDestination != null) {
                     // Cannot attack a destination occupied by your own piece
@@ -92,7 +93,8 @@ public class Game {
         for (Position destination : possibleDestinationsForKing) {
             // For each possible position the king can move to, create a new
             // board we can simulate this movement on and check if it can be attacked
-            Board simulatedBoardAfterMove = Board.simulateBoardAfterMove(board, board.getPositionOf(king), destination);
+            Move move = new Move(board.getPositionOf(king), destination);
+            Board simulatedBoardAfterMove = Board.simulateBoardAfterMove(move, board);
             if (!isAttackableForOpponent(player, destination, simulatedBoardAfterMove)) {
                 kingCannotEscape = false;
             }
@@ -100,8 +102,8 @@ public class Game {
         return isCurrentPlayerInCheck() && kingCannotEscape;
     }
 
-    boolean canMake(Position from, Position to) {
-        Piece piece = board.getPieceOn(from);
+    boolean canMake(Move move) {
+        Piece piece = board.getPieceOn(move.getFrom());
 
         boolean canMake = true;
 
@@ -111,26 +113,26 @@ public class Game {
         } else if (piece.belongsTo(opponent(currentPlayer))) {
             // Cannot move other player's pieces
             canMake = false;
-        } else if (!canMovePiece(from, to, piece, board)) {
+        } else if (!canMovePiece(move, piece, board)) {
             canMake = false;
-        } else if (board.getPieceOn(to) != null) {
+        } else if (board.getPieceOn(move.getTo()) != null) {
             // Cannot move to an occupied square
             canMake = false;
         }
         return canMake;
     }
 
-    boolean canCapture(Position from, Position to) {
-        return isValidCapture(currentPlayer, board, from, to);
+    boolean canCapture(Move move) {
+        return isValidCapture(move, currentPlayer, board);
     }
 
-    boolean isValidCapture(Player player, Board board, Position from, Position to) {
-        Piece attacker = board.getPieceOn(from);
-        Piece pieceOnDestination = board.getPieceOn(to);
+    boolean isValidCapture(Move move, Player player, Board board) {
+        Piece attacker = board.getPieceOn(move.getFrom());
+        Piece pieceOnDestination = board.getPieceOn(move.getTo());
 
         boolean validCapture = true;
 
-        if (board.hasNoPieceOn(to) || attacker == null) {
+        if (board.hasNoPieceOn(move.getTo()) || attacker == null) {
             // Cannot attack empty squares or from empty square
             validCapture = false;
         } else if (attacker.belongsTo(opponent(player))) {
@@ -141,8 +143,8 @@ public class Game {
             validCapture = false;
         } else if (attacker.getType() == PieceType.PAWN) {
             // Pawns attack diagonally forwards only
-            validCapture = from.isDiagonalTo(to) && verticalDistanceWithDirection(player, from, to) == 1;
-        } else if (!canMovePiece(from, to, attacker, board)) {
+            validCapture = move.getFrom().isDiagonalTo(move.getTo()) && verticalDistanceWithDirection(move, player) == 1;
+        } else if (!canMovePiece(new Move(move.getFrom(), move.getTo()), attacker, board)) {
             //Cannot attack position you cannot move to.
             validCapture = false;
         }
@@ -158,7 +160,8 @@ public class Game {
 
             Position opponentPosition = board.getPositionOf(opponentPiece);
 
-            if (isValidCapture(opponent(player), board, opponentPosition, kingsPosition)) {
+            Move move = new Move(opponentPosition, kingsPosition);
+            if (isValidCapture(move, opponent(player), board)) {
                 return true;
             }
         }
@@ -171,9 +174,9 @@ public class Game {
     }
 
     //Find all pieces in the path, on the given board
-    Set<Piece> piecesInPath(Position from, Position to, Board board) {
+    Set<Piece> piecesInPath(Move move, Board board) {
         Set<Piece> piecesInPath = new HashSet<Piece>();
-        for (Position p : calculatePositionsInPath(from, to)) {
+        for (Position p : calculatePositionsInPath(move)) {
             if (board.hasPieceOn(p)) {
                 Piece piece = board.getPieceOn(p);
                 piecesInPath.add(piece);
@@ -182,42 +185,42 @@ public class Game {
         return piecesInPath;
     }
 
-    private boolean canMovePiece(Position from, Position to, Piece piece, Board board) {
+    private boolean canMovePiece(Move move, Piece piece, Board board) {
 
         // Cannot move to a new position if there are other pieces in the
         // way - unless when piece is a knight
-        Set<Piece> piecesInPath = piecesInPath(from, to, board);
+        Set<Piece> piecesInPath = piecesInPath(move, board);
         switch (piece.getType()) {
             case PAWN: {
                 //Pawns can move one square forwards, or two if it hasn't moved before, and no other piece is blocking.
                 return piecesInPath.isEmpty()
-                        && (from.isVerticalTo(to) && validDistance(verticalDistanceWithDirection(piece.getPlayer(), from, to), piece));
+                        && (move.getFrom().isVerticalTo(move.getTo()) && validDistance(verticalDistanceWithDirection(move, piece.getPlayer()), piece));
             }
             case ROOK: {
                 //Rooks can move horizontal or vertical, when no other piece is blocking.
-                return piecesInPath.isEmpty() && (from.isHorizontalTo(to) || from.isVerticalTo(to));
+                return piecesInPath.isEmpty() && (move.getFrom().isHorizontalTo(move.getTo()) || move.getFrom().isVerticalTo(move.getTo()));
             }
             case KNIGHT: {
                 //Knights can jump in a knightly manner.
-                int horizontal = from.horizontalDistanceTo(to);
-                int vertical = from.verticalDistanceTo(to);
+                int horizontal = move.getFrom().horizontalDistanceTo(move.getTo());
+                int vertical = move.getFrom().verticalDistanceTo(move.getTo());
                 return (horizontal == 2 && vertical == 1)
                         || (horizontal == 1 && vertical == 2);
             }
             case BISHOP: {
                 //Bishops can move diagonally, when no other piece is blocking.
-                return piecesInPath.isEmpty() && from.isDiagonalTo(to);
+                return piecesInPath.isEmpty() && move.getFrom().isDiagonalTo(move.getTo());
             }
             case QUEEN: {
                 //Queens can move all over, when no other piece is blocking.
                 return piecesInPath.isEmpty() &&
-                        (from.isVerticalTo(to) || from.isHorizontalTo(to) || from.isDiagonalTo(to));
+                        (move.getFrom().isVerticalTo(move.getTo()) || move.getFrom().isHorizontalTo(move.getTo()) || move.getFrom().isDiagonalTo(move.getTo()));
             }
             case KING: {
                 //King can move in all directions, but only one square at a time.
-                return (from.isVerticalTo(to) && validDistance(from.verticalDistanceTo(to), piece))
-                        || (from.isDiagonalTo(to) && validDistance(from.verticalDistanceTo(to), piece))
-                        || (from.isHorizontalTo(to) && validDistance(from.horizontalDistanceTo(to), piece));
+                return (move.getFrom().isVerticalTo(move.getTo()) && validDistance(move.getFrom().verticalDistanceTo(move.getTo()), piece))
+                        || (move.getFrom().isDiagonalTo(move.getTo()) && validDistance(move.getFrom().verticalDistanceTo(move.getTo()), piece))
+                        || (move.getFrom().isHorizontalTo(move.getTo()) && validDistance(move.getFrom().horizontalDistanceTo(move.getTo()), piece));
             }
             default: {
                 throw new IllegalArgumentException("Non-supported piece type: " + piece.getType());
@@ -237,41 +240,41 @@ public class Game {
     }
 
     //Pawns can only move forwards, so we need to know the direction as well as the distance
-    int verticalDistanceWithDirection(Player player, Position from, Position to) {
+    int verticalDistanceWithDirection(Move move, Player player) {
         if (Player.WHITE.equals(player)) {
-            return to.row - from.row;
+            return move.getTo().row - move.getFrom().row;
         } else {
-            return from.row - to.row;
+            return move.getFrom().row - move.getTo().row;
         }
     }
 
     //A path is the set of positions in a straight line from the from position to the to position
-    Set<Position> calculatePositionsInPath(Position from, Position to) {
+    Set<Position> calculatePositionsInPath(Move move) {
         Set<Position> range = new HashSet<Position>();
 
         //If move is neither vertical, horizontal or diagonal,
         //it isn't really a path, it is more like a jump
-        if ((from.isVerticalTo(to)
-                || from.isHorizontalTo(to)
-                || from.isDiagonalTo(to))) {
+        if ((move.getFrom().isVerticalTo(move.getTo())
+                || move.getFrom().isHorizontalTo(move.getTo())
+                || move.getFrom().isDiagonalTo(move.getTo()))) {
 
-            int totalLength = from.isHorizontalTo(to) ? from.horizontalDistanceTo(to) : from.verticalDistanceTo(to);
+            int totalLength = move.getFrom().isHorizontalTo(move.getTo()) ? move.getFrom().horizontalDistanceTo(move.getTo()) : move.getFrom().verticalDistanceTo(move.getTo());
             int length = totalLength - 1;
 
-            int currentColumnNameIndex = from.column - 1;
-            int currentRow = from.row;
+            int currentColumnNameIndex = move.getFrom().column - 1;
+            int currentRow = move.getFrom().row;
             while (length > 0) {
-                if (from.row < to.row) {
+                if (move.getFrom().row < move.getTo().row) {
                     //If it is a move up, increment the row.
                     currentRow += 1;
-                } else if (to.row < from.row) {
+                } else if (move.getTo().row < move.getFrom().row) {
                     //If it is a move down, decrement the row.
                     currentRow -= 1;
                 }
-                if (from.column < to.column) {
+                if (move.getFrom().column < move.getTo().column) {
                     //If it is a move left, increment the column.
                     currentColumnNameIndex += 1;
-                } else if (to.column < from.column) {
+                } else if (move.getTo().column < move.getFrom().column) {
                     //If it is a move right, decrement the column.
                     currentColumnNameIndex -= 1;
                 }
