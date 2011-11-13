@@ -482,7 +482,7 @@ public class GameTest {
                 .withPieceOn(Player.WHITE, PieceType.QUEEN, D4)
                 .build();
         Game game = new Game(board);
-        assertThat(game.piecesInPath(new Move(D1, D8), board))
+        assertThat(board.piecesInPath(new Move(D1, D8)))
                 .contains(board.getPieceOn(D4))
                 .contains(board.getPieceOn(D6))
                 .excludes(board.getPieceOn(D5));

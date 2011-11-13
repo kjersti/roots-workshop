@@ -16,7 +16,7 @@ public class Game {
     public void move(Move move) {
         if (canMove(move)) {
             board.makeMove(move);
-            currentPlayer = opponent(currentPlayer);
+            currentPlayer = currentPlayer.opponent();
         } else {
             throw new IllegalArgumentException("Cannot make move " + move);
         }
@@ -38,7 +38,7 @@ public class Game {
     }
 
     public Player getWinningColor() {
-        return opponent(currentPlayer);
+        return currentPlayer.opponent();
     }
 
     public boolean isCurrentPlayerInCheckMate() {
@@ -75,7 +75,7 @@ public class Game {
         for (Position possibleDestination : Position.values()) {
             boolean isValidMove;
             Move move = new Move(position, possibleDestination);
-            if (canMovePiece(move, king, board)) {
+            if (king.canMove(move, board.piecesInPath(move))) {
                 Piece pieceOnDestination = board.getPieceOn(possibleDestination);
                 if (pieceOnDestination != null) {
                     // Cannot attack a destination occupied by your own piece
@@ -110,10 +110,10 @@ public class Game {
         if (piece == null) {
             // Cannot move from an empty square
             canMake = false;
-        } else if (piece.belongsTo(opponent(currentPlayer))) {
+        } else if (piece.belongsTo(currentPlayer.opponent())) {
             // Cannot move other player's pieces
             canMake = false;
-        } else if (!canMovePiece(move, piece, board)) {
+        } else if (!piece.canMove(move, board.piecesInPath(move))) {
             canMake = false;
         } else if (board.getPieceOn(move.getTo()) != null) {
             // Cannot move to an occupied square
@@ -135,7 +135,7 @@ public class Game {
         if (board.hasNoPieceOn(move.getTo()) || attacker == null) {
             // Cannot attack empty squares or from empty square
             validCapture = false;
-        } else if (attacker.belongsTo(opponent(player))) {
+        } else if (attacker.belongsTo(player.opponent())) {
             // Piece belongs to opponent
             validCapture = false;
         } else if(pieceOnDestination.belongsTo(attacker.getPlayer())){
@@ -143,8 +143,8 @@ public class Game {
             validCapture = false;
         } else if (attacker.getType() == PieceType.PAWN) {
             // Pawns attack diagonally forwards only
-            validCapture = move.getFrom().isDiagonalTo(move.getTo()) && verticalDistanceWithDirection(move, player) == 1;
-        } else if (!canMovePiece(new Move(move.getFrom(), move.getTo()), attacker, board)) {
+            validCapture = move.getFrom().isDiagonalTo(move.getTo()) && move.verticalDistanceWithDirection(player) == 1;
+        } else if (!attacker.canMove(move, board.piecesInPath(move))) {
             //Cannot attack position you cannot move to.
             validCapture = false;
         }
@@ -154,136 +154,18 @@ public class Game {
     }
 
     boolean isAttackableForOpponent(Player player, Position kingsPosition, Board board) {
-        for (Piece opponentPiece : board.getAllPiecesFor(opponent(player))) {
+        for (Piece opponentPiece : board.getAllPiecesFor(player.opponent())) {
             // Check if each of opponent's pieces can attack the current
             // player's king
 
             Position opponentPosition = board.getPositionOf(opponentPiece);
 
             Move move = new Move(opponentPosition, kingsPosition);
-            if (isValidCapture(move, opponent(player), board)) {
+            if (isValidCapture(move, player.opponent(), board)) {
                 return true;
             }
         }
         return false;
     }
 
-    private Player opponent(Player player) {
-        if (Player.WHITE.equals(player)) return Player.BLACK;
-        else return Player.WHITE;
-    }
-
-    //Find all pieces in the path, on the given board
-    Set<Piece> piecesInPath(Move move, Board board) {
-        Set<Piece> piecesInPath = new HashSet<Piece>();
-        for (Position p : calculatePositionsInPath(move)) {
-            if (board.hasPieceOn(p)) {
-                Piece piece = board.getPieceOn(p);
-                piecesInPath.add(piece);
-            }
-        }
-        return piecesInPath;
-    }
-
-    private boolean canMovePiece(Move move, Piece piece, Board board) {
-
-        // Cannot move to a new position if there are other pieces in the
-        // way - unless when piece is a knight
-        Set<Piece> piecesInPath = piecesInPath(move, board);
-        switch (piece.getType()) {
-            case PAWN: {
-                //Pawns can move one square forwards, or two if it hasn't moved before, and no other piece is blocking.
-                return piecesInPath.isEmpty()
-                        && (move.getFrom().isVerticalTo(move.getTo()) && validDistance(verticalDistanceWithDirection(move, piece.getPlayer()), piece));
-            }
-            case ROOK: {
-                //Rooks can move horizontal or vertical, when no other piece is blocking.
-                return piecesInPath.isEmpty() && (move.getFrom().isHorizontalTo(move.getTo()) || move.getFrom().isVerticalTo(move.getTo()));
-            }
-            case KNIGHT: {
-                //Knights can jump in a knightly manner.
-                int horizontal = move.getFrom().horizontalDistanceTo(move.getTo());
-                int vertical = move.getFrom().verticalDistanceTo(move.getTo());
-                return (horizontal == 2 && vertical == 1)
-                        || (horizontal == 1 && vertical == 2);
-            }
-            case BISHOP: {
-                //Bishops can move diagonally, when no other piece is blocking.
-                return piecesInPath.isEmpty() && move.getFrom().isDiagonalTo(move.getTo());
-            }
-            case QUEEN: {
-                //Queens can move all over, when no other piece is blocking.
-                return piecesInPath.isEmpty() &&
-                        (move.getFrom().isVerticalTo(move.getTo()) || move.getFrom().isHorizontalTo(move.getTo()) || move.getFrom().isDiagonalTo(move.getTo()));
-            }
-            case KING: {
-                //King can move in all directions, but only one square at a time.
-                return (move.getFrom().isVerticalTo(move.getTo()) && validDistance(move.getFrom().verticalDistanceTo(move.getTo()), piece))
-                        || (move.getFrom().isDiagonalTo(move.getTo()) && validDistance(move.getFrom().verticalDistanceTo(move.getTo()), piece))
-                        || (move.getFrom().isHorizontalTo(move.getTo()) && validDistance(move.getFrom().horizontalDistanceTo(move.getTo()), piece));
-            }
-            default: {
-                throw new IllegalArgumentException("Non-supported piece type: " + piece.getType());
-            }
-        }
-    }
-
-    private boolean validDistance(int distance, Piece piece) {
-        // Pawns can move two squares forward when they make their
-        // first move in a game; otherwise one square
-        if (piece.getType() == PieceType.PAWN) {
-            return distance == 1 || (!piece.isMoved() && distance == 2);
-        } else if (piece.getType() == PieceType.KING) {
-            return distance == 1;
-        }
-        return false;
-    }
-
-    //Pawns can only move forwards, so we need to know the direction as well as the distance
-    int verticalDistanceWithDirection(Move move, Player player) {
-        if (Player.WHITE.equals(player)) {
-            return move.getTo().row - move.getFrom().row;
-        } else {
-            return move.getFrom().row - move.getTo().row;
-        }
-    }
-
-    //A path is the set of positions in a straight line from the from position to the to position
-    Set<Position> calculatePositionsInPath(Move move) {
-        Set<Position> range = new HashSet<Position>();
-
-        //If move is neither vertical, horizontal or diagonal,
-        //it isn't really a path, it is more like a jump
-        if ((move.getFrom().isVerticalTo(move.getTo())
-                || move.getFrom().isHorizontalTo(move.getTo())
-                || move.getFrom().isDiagonalTo(move.getTo()))) {
-
-            int totalLength = move.getFrom().isHorizontalTo(move.getTo()) ? move.getFrom().horizontalDistanceTo(move.getTo()) : move.getFrom().verticalDistanceTo(move.getTo());
-            int length = totalLength - 1;
-
-            int currentColumnNameIndex = move.getFrom().column - 1;
-            int currentRow = move.getFrom().row;
-            while (length > 0) {
-                if (move.getFrom().row < move.getTo().row) {
-                    //If it is a move up, increment the row.
-                    currentRow += 1;
-                } else if (move.getTo().row < move.getFrom().row) {
-                    //If it is a move down, decrement the row.
-                    currentRow -= 1;
-                }
-                if (move.getFrom().column < move.getTo().column) {
-                    //If it is a move left, increment the column.
-                    currentColumnNameIndex += 1;
-                } else if (move.getTo().column < move.getFrom().column) {
-                    //If it is a move right, decrement the column.
-                    currentColumnNameIndex -= 1;
-                }
-
-                //Find the position represented by the column/row given by the above calculation.
-                range.add(Position.valueOf(Position.COLUMN_INDICES[currentColumnNameIndex] + currentRow));
-                length -= 1;
-            }
-        }
-        return range;
-    }
 }

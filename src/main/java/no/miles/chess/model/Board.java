@@ -188,4 +188,16 @@ public class Board {
     private Position toPosition(int row, int column) {
         return Position.valueOf(Position.COLUMN_INDICES[column] + (8 - row));
     }
+
+    //Find all pieces in the path, on the given board
+    Set<Piece> piecesInPath(Move move) {
+        Set<Piece> piecesInPath = new HashSet<Piece>();
+        for (Position p : move.calculatePositionsInPath()) {
+            if (hasPieceOn(p)) {
+                Piece piece = getPieceOn(p);
+                piecesInPath.add(piece);
+            }
+        }
+        return piecesInPath;
+    }
 }
