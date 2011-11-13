@@ -1,8 +1,5 @@
 package no.miles.chess.model;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class Game {
 
     private Player currentPlayer;
@@ -23,18 +20,8 @@ public class Game {
     }
 
     public boolean canMove(Move move) {
-        boolean isValidMove = canMake(move) || canCapture(move);
-        if (isValidMove) {
-            //We cannot put ourselves in check. If we do this move, will the
-            //current player put herself in check?
-            Board simulatedBoardAfterMove = Board.simulateBoardAfterMove(move, board);
-            Piece kingForPlayer = simulatedBoardAfterMove.findKingForPlayer(currentPlayer);
-            Position kingsPosition = simulatedBoardAfterMove.getPositionOf(kingForPlayer);
-            if (isAttackableForOpponent(currentPlayer, kingsPosition, simulatedBoardAfterMove)) {
-                isValidMove = false;
-            }
-        }
-        return isValidMove;
+        return (canMake(move) || canCapture(move))
+                && !isPlayerInCheck(currentPlayer, Board.simulateBoardAfterMove(move, board));
     }
 
     public Player getWinningColor() {
@@ -46,17 +33,11 @@ public class Game {
     }
 
     public boolean isCurrentPlayerInCheck() {
-        return isPlayerInCheck(currentPlayer);
+        return isPlayerInCheck(currentPlayer, board);
     }
 
     public Player currentPlayer() {
         return currentPlayer;
-    }
-
-    private boolean isPlayerInCheck(Player player) {
-        Piece king = board.findKingForPlayer(player);
-        Position kingsPosition = board.getPositionOf(king);
-        return isAttackableForOpponent(player, kingsPosition, board);
     }
 
     void setCurrentPlayer(Player player) {
@@ -64,45 +45,49 @@ public class Game {
     }
 
     boolean isPlayerInCheckMate(Player player) {
+        return isCurrentPlayerInCheck() && kingCannotEscape(player);
+    }
 
+    boolean canMake(Move move) {
+        return canMake(move, board, currentPlayer);
+    }
+
+    boolean canCapture(Move move) {
+        return canCapture(move, currentPlayer, board);
+    }
+
+    private boolean isPlayerInCheck(Player player, Board board) {
+        Piece king = board.findKingForPlayer(player);
+        Position kingsPosition = board.getPositionOf(king);
+        for (Piece opponentPiece : board.getAllPiecesFor(player.opponent())) {
+            Position opponentPosition = board.getPositionOf(opponentPiece);
+            Move move = new Move(opponentPosition, kingsPosition);
+            if (canCapture(move, player.opponent(), board)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean kingCannotEscape(Player player) {
         boolean kingCannotEscape = true;
         Piece king = board.findKingForPlayer(player);
         Position position = board.getPositionOf(king);
-        Set<Position> possibleDestinationsForKing = new HashSet<Position>();
 
         // Try out all the positions on the board to see if it is possible for the
         // king to move here
         for (Position possibleDestination : Position.values()) {
-            boolean isValidMove;
             Move move = new Move(position, possibleDestination);
-            if (king.canMove(move, board.piecesInPath(move))) {
-                Piece pieceOnDestination = board.getPieceOn(possibleDestination);
-                if (pieceOnDestination != null) {
-                    // Cannot attack a destination occupied by your own piece
-                    isValidMove = !(pieceOnDestination.belongsTo(king.getPlayer()));
-                    if (isValidMove) {
-                        possibleDestinationsForKing.add(possibleDestination);
-                    }
-                } else {
-                    // No piece on this position, ok to move.
-                    possibleDestinationsForKing.add(possibleDestination);
-                }
-            }
-        }
-
-        for (Position destination : possibleDestinationsForKing) {
-            // For each possible position the king can move to, create a new
-            // board we can simulate this movement on and check if it can be attacked
-            Move move = new Move(board.getPositionOf(king), destination);
-            Board simulatedBoardAfterMove = Board.simulateBoardAfterMove(move, board);
-            if (!isAttackableForOpponent(player, destination, simulatedBoardAfterMove)) {
+            if (canMake(move, board, currentPlayer)
+                    && !isPlayerInCheck(player, Board.simulateBoardAfterMove(move, board))) {
                 kingCannotEscape = false;
             }
         }
-        return isCurrentPlayerInCheck() && kingCannotEscape;
+
+        return kingCannotEscape;
     }
 
-    boolean canMake(Move move) {
+    private boolean canMake(Move move, Board board, Player player) {
         Piece piece = board.getPieceOn(move.getFrom());
 
         boolean canMake = true;
@@ -110,7 +95,7 @@ public class Game {
         if (piece == null) {
             // Cannot move from an empty square
             canMake = false;
-        } else if (piece.belongsTo(currentPlayer.opponent())) {
+        } else if (piece.belongsTo(player.opponent())) {
             // Cannot move other player's pieces
             canMake = false;
         } else if (!piece.canMove(move, board.piecesInPath(move))) {
@@ -122,11 +107,7 @@ public class Game {
         return canMake;
     }
 
-    boolean canCapture(Move move) {
-        return isValidCapture(move, currentPlayer, board);
-    }
-
-    boolean isValidCapture(Move move, Player player, Board board) {
+    private boolean canCapture(Move move, Player player, Board board) {
         Piece attacker = board.getPieceOn(move.getFrom());
         Piece pieceOnDestination = board.getPieceOn(move.getTo());
 
@@ -147,21 +128,6 @@ public class Game {
 
 
         return validCapture;
-    }
-
-    boolean isAttackableForOpponent(Player player, Position kingsPosition, Board board) {
-        for (Piece opponentPiece : board.getAllPiecesFor(player.opponent())) {
-            // Check if each of opponent's pieces can attack the current
-            // player's king
-
-            Position opponentPosition = board.getPositionOf(opponentPiece);
-
-            Move move = new Move(opponentPosition, kingsPosition);
-            if (isValidCapture(move, player.opponent(), board)) {
-                return true;
-            }
-        }
-        return false;
     }
 
 }
