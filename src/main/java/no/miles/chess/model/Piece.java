@@ -4,6 +4,8 @@ import java.util.Set;
 
 public class Piece {
 
+    public static final Piece NONE = new NullPiece();
+
     private final Player player;
     private final PieceType type;
     private boolean moved;
@@ -105,7 +107,7 @@ public class Piece {
         }
     }
 
-    boolean canCapturePiece(Move move, Set<Piece> piecesInPath) {
+    boolean canCapture(Move move, Set<Piece> piecesInPath) {
         boolean canCapture = true;
         if (type == PieceType.PAWN) {
             // Pawns attack diagonally forwards only

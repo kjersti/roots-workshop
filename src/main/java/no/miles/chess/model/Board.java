@@ -27,6 +27,9 @@ public class Board {
 
     private Board() {
         pieces = new HashMap<Position, Piece>();
+        for (Position p : Position.values()) {
+            pieces.put(p, Piece.NONE);
+        }
     }
 
     private void placeInitialPieces() {
@@ -72,11 +75,7 @@ public class Board {
 
         for (Position position : Position.values()) {
             Piece piece = board.getPieceOn(position);
-            if (piece != null) {
-                newPieces.put(position, piece.copy());
-            } else {
-                newPieces.put(position, null);
-            }
+            newPieces.put(position, piece.copy());
         }
         pieces = newPieces;
     }
@@ -84,7 +83,7 @@ public class Board {
     public Piece findKingForPlayer(Player player) {
         for (Map.Entry<Position, Piece> entry : pieces.entrySet()) {
             Piece piece = entry.getValue();
-            if (piece != null && piece.getType() == PieceType.KING && piece.belongsTo(player)) {
+            if (piece.belongsTo(player) && piece.getType() == PieceType.KING) {
                 return piece;
             }
         }
@@ -97,7 +96,7 @@ public class Board {
         Set<Piece> playerPieces = new HashSet<Piece>();
 
         for (Piece piece : pieces.values()) {
-            if (piece != null && piece.belongsTo(player)) {
+            if (piece.belongsTo(player)) {
                 playerPieces.add(piece);
             }
         }
@@ -106,7 +105,7 @@ public class Board {
     }
 
     public boolean hasPieceOn(Position position) {
-        return pieces.get(position) != null;
+        return pieces.get(position) != Piece.NONE;
     }
 
     public boolean hasNoPieceOn(Position position) {
@@ -116,7 +115,7 @@ public class Board {
     public void makeMove(Move move) {
         Piece piece = pieces.get(move.getFrom());
 
-        pieces.put(move.getFrom(), null);
+        pieces.put(move.getFrom(), Piece.NONE);
         pieces.put(move.getTo(), piece);
         piece.setMoved(true);
     }
@@ -161,15 +160,27 @@ public class Board {
                 Position position = toPosition(row, column);
 
                 String symbol = "";
-                if(hasPieceOn(position)) {
+                if (hasPieceOn(position)) {
                     Piece piece = getPieceOn(position);
-                    switch(piece.getType()){
-                        case BISHOP: symbol = "B"; break;
-                        case KNIGHT: symbol = "N"; break;
-                        case ROOK: symbol = "R"; break;
-                        case KING: symbol = "K"; break;
-                        case QUEEN: symbol = "Q"; break;
-                        case PAWN: symbol = "x"; break;
+                    switch (piece.getType()) {
+                        case BISHOP:
+                            symbol = "B";
+                            break;
+                        case KNIGHT:
+                            symbol = "N";
+                            break;
+                        case ROOK:
+                            symbol = "R";
+                            break;
+                        case KING:
+                            symbol = "K";
+                            break;
+                        case QUEEN:
+                            symbol = "Q";
+                            break;
+                        case PAWN:
+                            symbol = "x";
+                            break;
                     }
 
                     symbol = piece.belongsTo(Player.WHITE) ? "w" + symbol : "b" + symbol;

@@ -92,15 +92,12 @@ public class Game {
 
         boolean canMake = true;
 
-        if (piece == null) {
-            // Cannot move from an empty square
-            canMake = false;
-        } else if (piece.belongsTo(player.opponent())) {
+        if (piece.belongsTo(player.opponent())) {
             // Cannot move other player's pieces
             canMake = false;
         } else if (!piece.canMove(move, board.piecesInPath(move))) {
             canMake = false;
-        } else if (board.getPieceOn(move.getTo()) != null) {
+        } else if (board.hasPieceOn(move.getTo())) {
             // Cannot move to an occupied square
             canMake = false;
         }
@@ -113,7 +110,7 @@ public class Game {
 
         boolean validCapture = true;
 
-        if (board.hasNoPieceOn(move.getTo()) || attacker == null) {
+        if (board.hasNoPieceOn(move.getTo())) {
             // Cannot attack empty squares or from empty square
             validCapture = false;
         } else if (attacker.belongsTo(player.opponent())) {
@@ -122,7 +119,7 @@ public class Game {
         } else if(pieceOnDestination.belongsTo(attacker.getPlayer())){
             // Cannot attack own piece
             validCapture = false;
-        } else if (!attacker.canCapturePiece(move, board.piecesInPath(move))) {
+        } else if (!attacker.canCapture(move, board.piecesInPath(move))) {
             validCapture = false;
         }
 
